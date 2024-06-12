@@ -1,0 +1,7 @@
+fastapi
+pydantic
+pyaml_env
+requests
+pandas
+google-cloud-bigquery
+uv

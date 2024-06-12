@@ -1,0 +1,21 @@
+connector:
+  max_delta_time: '100000'
+
+source:
+  endpoint: 'https://opendata.aemet.es/opendata/api/valores/climatologicos/diarios/datos'
+  api_key: !ENV ${AEMET_API_KEY}
+
+sink:
+  project_id: !ENV ${PROJECT_ID}
+  dataset_name: 'staging_dataset'
+  table_name: 'weather_data'
+  location: 'EU'
+
+orchestrator:
+  transformer_project_id: !ENV ${TRANSFORMER_PROJECT_ID}
+  transformer_dataset_name: 'processing_dataset'
+
+dataform:
+  project_id: !ENV ${DATAFORM_PROJECT_ID}
+  location: 'EU'
+  dataset: 'reporting_dataset'
