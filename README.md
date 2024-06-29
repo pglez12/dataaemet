@@ -2,7 +2,7 @@
 ## Altostratus Data – Reto
 
 ### Descripción del Proyecto
-
+![image](https://github.com/pglez12/dataaemet/assets/135646732/d588c54a-5ae3-4e70-8ed0-5e66715cabf4)
 Este proyecto implementa una arquitectura para ejecutar un proceso de extracción, carga y transformación (ELT) desde la API de AEMET (Agencia Estatal de Meteorología de España). La arquitectura está diseñada para extraer datos climatológicos diarios de todas las estaciones meteorológicas para un día determinado y procesarlos para su visualización en un dashboard en Looker Studio.
 
 ### Arquitectura
