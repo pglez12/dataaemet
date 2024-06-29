@@ -1,0 +1,5 @@
+defaultProject: aemet-data
+defaultLocation: europe-west1
+defaultDataset: aemet_db
+defaultAssertionDataset: aemet_db.data_stagging2
+dataformCoreVersion: 3.0.0-beta.4

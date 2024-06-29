@@ -1,0 +1,30 @@
+config {
+    type: "table",
+    schema: "aemet_db",
+    name: "weather_reporting"
+}
+
+SELECT
+  dp.fecha,
+  dp.indicativo,
+  dp.nombre,
+  dp.provincia,
+  AVG(dp.tmed) AS avg_temp,
+  MIN(dp.tmin) AS min_temp,
+  MAX(dp.tmax) AS max_temp,
+  AVG(dp.presmax) AS avg_pressure,
+  MIN(dp.presmin) AS min_pressure,
+  MAX(dp.presmax) AS max_pressure,
+  SUM(dp.prec) AS total_precipitation,
+  CONCAT(e.latitud, ',', e.longitud) AS coordinates
+FROM
+  ${ref("data_processing")} dp
+JOIN
+  `aemet-data.aemet_db.estaciones` e ON dp.indicativo = e.indicativo
+GROUP BY
+  dp.fecha,
+  dp.indicativo,
+  dp.nombre,
+  dp.provincia,
+  e.latitud,
+  e.longitud

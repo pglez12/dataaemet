@@ -1,0 +1,34 @@
+config {
+    type: "view",
+    schema: "aemet_db",
+    name: "data_processing"
+}
+
+SELECT
+  fecha,
+  indicativo,
+  nombre,
+  provincia,
+  altitud,
+  tmed,
+  prec,
+  tmin,
+  horatmin,
+  tmax,
+  horatmax,
+  dir,
+  velmedia,
+  racha,
+  horaracha,
+  sol,
+  presmax,
+  horapresmax,
+  presmin,
+  horapresmin,
+  hrmedia,
+  hrmax,
+  horahrmax,
+  hrmin,
+  horahrmin
+FROM
+  `aemet-data.aemet_db.data_stagging2`
