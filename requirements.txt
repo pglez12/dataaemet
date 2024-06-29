@@ -1,7 +1,5 @@
 fastapi
-pydantic
-pyaml_env
+uvicorn
 requests
-pandas
+datetime
 google-cloud-bigquery
-uv

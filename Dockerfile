@@ -1,21 +1,28 @@
-FROM python:3.10-slim 
+FROM python:3.10-slim
 
-# Allow statements and log messages to immediately appear in the Knative logs
-ENV PYTHONUNBUFFERED True
+# Establecer el directorio de trabajo en el contenedor
+WORKDIR /app
 
-ENV APP_HOME /app
-WORKDIR ${APP_HOME}
+# Copiar los archivos de requisitos
+COPY requirements.txt .
 
-RUN pip3 install poetry
-RUN poetry config virtualenvs.create false
+# Instalar las dependencias
+RUN pip install --no-cache-dir -r requirements.txt
 
-# add and install python requirements
-COPY pyproject.toml ./
-COPY poetry.lock ./
-RUN poetry install --only main 
+# Instalar el cliente de BigQuery
+# RUN pip install --no-cache-dir google-cloud-bigquery
 
-COPY . ./
+# Copiar el resto de los archivos de la aplicación
+COPY . .
 
-EXPOSE $PORT
+# Set environment variables
+ENV AEMET_API_KEY="eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwcHR5bGxhbmFAZ21haWwuY29tIiwianRpIjoiMjJjNGNkZGQtZmQyNy00YTM3LWFlYmMtYjY3NjNiMjA4MmMzIiwiaXNzIjoiQUVNRVQiLCJpYXQiOjE3MTgwOTMxNTksInVzZXJJZCI6IjIyYzRjZGRkLWZkMjctNGEzNy1hZWJjLWI2NzYzYjIwODJjMyIsInJvbGUiOiIifQ.dsLyBdXEMU2JoAYTjZTRyxtMje5t3iAT__9Moy7tl5g"
+ENV PROJECT_ID="aemet-data"
+ENV DATASET_ID="aemet_db"
+ENV TABLE_ID="data_stagging2"
 
-CMD exec poetry run gunicorn --bind 0.0.0.0:$PORT --workers 1 --worker-class uvicorn.workers.UvicornWorker --threads 8 --timeout 0 aemet_api:app
+# Expose the port used by FastAPI
+EXPOSE 8000
+
+# Command to run the application using the environment variables
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,21 +1,39 @@
-connector:
-  max_delta_time: '100000'
+AEMET_API_KEY: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwcHR5bGxhbmFAZ21haWwuY29tIiwianRpIjoiMjJjNGNkZGQtZmQyNy00YTM3LWFlYmMtYjY3NjNiMjA4MmMzIiwiaXNzIjoiQUVNRVQiLCJpYXQiOjE3MTgwOTMxNTksInVzZXJJZCI6IjIyYzRjZGRkLWZkMjctNGEzNy1hZWJjLWI2NzYzYjIwODJjMyIsInJvbGUiOiIifQ.dsLyBdXEMU2JoAYTjZTRyxtMje5t3iAT__9Moy7tl5g"
+PROJECT_ID: "aemet-data"
+DATASET_ID: "aemet_db"
+TABLE_ID: "data_stagging2"
 
 source:
-  endpoint: 'https://opendata.aemet.es/opendata/api/valores/climatologicos/diarios/datos'
-  api_key: !ENV ${AEMET_API_KEY}
+  base_url: "https://opendata.aemet.es/opendata/api/valores/climatologicos/diarios/datos/fechaini/{start_date}/fechafin/{end_date}/todasestaciones"
+  api_key: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwcHR5bGxhbmFAZ21haWwuY29tIiwianRpIjoiMjJjNGNkZGQtZmQyNy00YTM3LWFlYmMtYjY3NjNiMjA4MmMzIiwiaXNzIjoiQUVNRVQiLCJpYXQiOjE3MTgwOTMxNTksInVzZXJJZCI6IjIyYzRjZGRkLWZkMjctNGEzNy1hZWJjLWI2NzYzYjIwODJjMyIsInJvbGUiOiIifQ.dsLyBdXEMU2JoAYTjZTRyxtMje5t3iAT__9Moy7tl5g"
 
 sink:
-  project_id: !ENV ${PROJECT_ID}
-  dataset_name: 'staging_dataset'
-  table_name: 'weather_data'
-  location: 'EU'
-
-orchestrator:
-  transformer_project_id: !ENV ${TRANSFORMER_PROJECT_ID}
-  transformer_dataset_name: 'processing_dataset'
-
-dataform:
-  project_id: !ENV ${DATAFORM_PROJECT_ID}
-  location: 'EU'
-  dataset: 'reporting_dataset'
+  project_id: "aemet-data"
+  dataset_name: "aemet_db"
+  table_name: "data_stagging2"
+  schema:
+    - {"name": "fecha", "type": "DATE"}
+    - {"name": "indicativo", "type": "STRING"}
+    - {"name": "nombre", "type": "STRING"}
+    - {"name": "provincia", "type": "STRING"}
+    - {"name": "altitud", "type": "FLOAT"}
+    - {"name": "tmed", "type": "FLOAT"}
+    - {"name": "prec", "type": "FLOAT"}
+    - {"name": "tmin", "type": "FLOAT"}
+    - {"name": "horatmin", "type": "STRING"}
+    - {"name": "tmax", "type": "FLOAT"}
+    - {"name": "horatmax", "type": "STRING"}
+    - {"name": "dir", "type": "FLOAT"}
+    - {"name": "velmedia", "type": "FLOAT"}
+    - {"name": "racha", "type": "FLOAT"}
+    - {"name": "horaracha", "type": "STRING"}
+    - {"name": "sol", "type": "FLOAT"}
+    - {"name": "presmax", "type": "FLOAT"}
+    - {"name": "horapresmax", "type": "STRING"}
+    - {"name": "presmin", "type": "FLOAT"}
+    - {"name": "horapresmin", "type": "STRING"}
+    - {"name": "hrmedia", "type": "FLOAT"}
+    - {"name": "hrmax", "type": "FLOAT"}
+    - {"name": "horahrmax", "type": "STRING"}
+    - {"name": "hrmin", "type": "FLOAT"}
+    - {"name": "horahrmin", "type": "STRING"}

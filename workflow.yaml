@@ -1,0 +1,32 @@
+main:
+  params: [args]
+  steps:
+    - init:
+        assign:
+          - fetch_new: "https://data-run2-d4tbbpcilq-ew.a.run.app/incremental_load"
+          - fetch_old: "https://data-run2-d4tbbpcilq-ew.a.run.app/backfill"
+    - fetchNew:
+        call: http.get
+        args:
+          url: ${fetch_new}
+        result: newResult
+    - fetchOld:
+        call: http.get
+        args:
+          url: ${fetch_old}
+        result: oldResult
+    - checkStatus:
+        switch:
+          - condition: ${newResult.code == 200}
+            next: processData
+          - condition: ${oldResult.code == 200}
+            next: processData
+          - condition: ${newResult.code != 200}
+            next: handleFailure
+          - condition: ${oldResult.code != 200}
+            next: handleFailure
+    - processData:
+        # Aquí podrías añadir pasos adicionales para procesar los datos si es necesario
+        return: ${newResult.body}
+    - handleFailure:
+        return: ${"Error al llamar a la API de Cloud Run, notificación enviada"}
