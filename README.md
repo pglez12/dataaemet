@@ -1,8 +1,9 @@
 # ETL Aemet data
-## Altostratus Data – Reto
 
+## Altostratus Data – Reto
 ### Descripción del Proyecto
 ![image](https://github.com/pglez12/dataaemet/assets/135646732/d588c54a-5ae3-4e70-8ed0-5e66715cabf4)
+
 Este proyecto implementa una arquitectura para ejecutar un proceso de extracción, carga y transformación (ELT) desde la API de AEMET (Agencia Estatal de Meteorología de España). La arquitectura está diseñada para extraer datos climatológicos diarios de todas las estaciones meteorológicas para un día determinado y procesarlos para su visualización en un dashboard en Looker Studio.
 
 ### Arquitectura
@@ -24,10 +25,6 @@ Este proyecto implementa una arquitectura para ejecutar un proceso de extracció
 3. **Orchestrator:** Inicia el Transformer solo si se han cargado los datos satisfactoriamente.
 4. **Transformer:** Usa vistas para los resultados intermedios y tablas para los datos en la zona de Reporting.
 5. **Dashboard:** Incluye un mapa del tiempo con presiones, temperaturas, etc., y al menos un filtro de fecha y otro de localizaciones.
-
-### Fecha de Entrega
-
-Antes del 1 de julio de 2024.
 
 ### Modo de Entrega
 
@@ -114,19 +111,28 @@ Accede al dashboard en Looker Studio utilizando el enlace proporcionado en el re
 
 
 ```
-altostratus-data-project/
+dataaemet/
 │
-├── cloud-run/
+├── orchestrator/
+│   └── workflow.yaml          # Archivo de workflow para Cloud Run (si es necesario)
+├── connector/
 │   ├── main.py                # Configuración y ejecución de la aplicación FastAPI
 │   ├── connector.py           # Definición de la clase Connector
 │   ├── locations.py           # Funciones para gestionar las estaciones meteorológicas
 │   ├── sink.py                # Definición de la clase BigQuerySink
 │   ├── source.py              # Definición de la clase AEMETSource
-│   └── config.yaml            # Configuración de la aplicación (API y BigQuery)
+│   ├── config.py              # Definición de la clase Config y función get_config
+│   ├── models.py              # Definición de modelos Pydantic para validación de datos
+│   ├── config.yaml            # Configuración de la aplicación (API y BigQuery)
+│   ├── Dockerfile             # Definición del contenedor Docker
+│   └── requirements.txt       # Dependencias del proyecto
 │
-├── dataform/
-│   └── dataform.sql           # SQL scripts para crear y transformar tablas y vistas en BigQuery
+├── transformer/
+│   ├── definitions/           # Directorio para definiciones de Dataform
+│   │   ├── data_staging.sqlx  # SQL para vista de procesamiento de datos
+│   │   └── process_weather_data.sqlx  # SQL para tabla de reporte meteorológico
+│   ├── workflow_settings.yaml # Configuración de proyecto y dataset en Dataform
+│   └── README.md              # Documentación específica de Dataform (si es necesario)
 │
-└── README.md                  # Documentación del proyecto
+└── README.md                  # Documentación principal del proyecto
 ```
-´´´
