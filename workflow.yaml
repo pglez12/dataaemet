@@ -4,29 +4,54 @@ main:
     - init:
         assign:
           - fetch_new: "https://data-run2-d4tbbpcilq-ew.a.run.app/incremental_load"
-          - fetch_old: "https://data-run2-d4tbbpcilq-ew.a.run.app/backfill"
+        #  - fetch_old: "https://data-run2-d4tbbpcilq-ew.a.run.app/backfill"
+          - repository: "projects/aemet-data/locations/europe-west1/repositories/aemet_transformer"
+          - auth_token: "ya29.a0AXooCgvvrVXm0gjDq36mNjuwz3EpGD7_3uwqXp_AumQ2jsHF91aq_iWBTrkWS3_FjrZAROPlgSN8uEcB4jGE7m42nwzhSqVpHEV5yK45e2YoW1CtoICL4jKlfgWiUkIWeMP81IFnQSgpEAsH2RyjVuEXtAjyR8rf004sB-CFdRdLNlfDvEXjbOZmNk-K5JbExVDDYRtiAqvheEXc0_7N6n1dMF4usAjfCVFxuchMbkLujA8333axw1hICqf1B8ji060kZTrBdU2PVU-uWqKhWrOYaou4y2_EugieOOe-AlO2JcRxQbVQETloczDxLhGiGPlj8PH5Jz70gR2c056oewOtGUxn05qt0H8UmPHH8i6JMBd7yzdOaSeyqC1PMfaqk92lRwYlSJFONlT83UnW1uekaCgYKARMSARESFQHGX2MiBDHADc1XApSOH9sramcweA0415"
     - fetchNew:
         call: http.get
         args:
           url: ${fetch_new}
         result: newResult
-    - fetchOld:
-        call: http.get
-        args:
-          url: ${fetch_old}
-        result: oldResult
+    # - fetchOld:
+    #    call: http.get
+    #    args:
+    #      url: ${fetch_old}
+    #    result: oldResult
     - checkStatus:
         switch:
           - condition: ${newResult.code == 200}
-            next: processData
-          - condition: ${oldResult.code == 200}
-            next: processData
+            next: createCompilationResult
+    #     - condition: ${oldResult.code == 200}
+    #        next: createCompilationResult
           - condition: ${newResult.code != 200}
             next: handleFailure
-          - condition: ${oldResult.code != 200}
+    #      - condition: ${oldResult.code != 200}
+    #        next: handleFailure
+    - createCompilationResult:
+        call: http.post
+        args:
+          url: ${"https://dataform.googleapis.com/v1beta1/" + repository + "/compilationResults"}
+          auth:
+            type: OAuth2
+          body:
+            gitCommitish: "main"
+        result: compilationResult
+    - createWorkflowInvocation:
+        call: http.post
+        args:
+          url: ${"https://dataform.googleapis.com/v1beta1/" + repository + "/workflowInvocations"}
+          auth:
+            type: OAuth2
+          body:
+            compilationResult: ${compilationResult.body.name}
+        result: workflowInvocation
+    - checkWorkflowInvocationStatus:
+        switch:
+          - condition: ${workflowInvocation.code == 200}
+            next: success
+          - condition: ${workflowInvocation.code != 200}
             next: handleFailure
-    - processData:
-        # Aquí podrías añadir pasos adicionales para procesar los datos si es necesario
-        return: ${newResult.body}
+    - success:
+        return: ${workflowInvocation.body.name}
     - handleFailure:
-        return: ${"Error al llamar a la API de Cloud Run, notificación enviada"}
+        return: ${"Error al llamar a la API de Cloud Run o Dataform, notificación enviada"}
