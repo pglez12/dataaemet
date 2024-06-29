@@ -49,6 +49,7 @@ Proveer acceso de lectura a `data.team@altostratus.es` a:
   - config.py
   - config.yaml
   - models.py
+```
 
 Archivos Principales
 main.py
@@ -127,4 +128,5 @@ altostratus-data-project/
 │   └── dataform.sql           # SQL scripts para crear y transformar tablas y vistas en BigQuery
 │
 └── README.md                  # Documentación del proyecto
+```
 ´´´
