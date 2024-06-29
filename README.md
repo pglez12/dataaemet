@@ -35,104 +35,30 @@ Proveer acceso de lectura a `data.team@altostratus.es` a:
 3. Dashboard.
 
 ## Estructura del Proyecto
-
-```text
-- service/
-  - main.py
-  - connector.py
-  - locations.py
-  - sink.py
-  - source.py
-  - config.py
-  - config.yaml
-  - models.py
-```
-
-Archivos Principales
-main.py
-El archivo principal que configura y ejecuta la aplicación FastAPI. Contiene los endpoints para las cargas incrementales, backfill y actualización de ubicaciones.
-
-connector.py
-Implementa la lógica del Connector, responsable de la extracción y carga de datos desde la API de AEMET a BigQuery. Incluye métodos para cargas incrementales y backfill.
-
-locations.py
-Contiene la lógica para actualizar la información de las estaciones meteorológicas desde la API de AEMET y guardarla en BigQuery.
-
-sink.py
-Define la clase BigQuerySink que maneja la carga de datos en BigQuery y la recuperación de la última fecha de actualización.
-
-source.py
-Define la clase AEMETSource que maneja la extracción de datos desde la API de AEMET.
-
-config.py
-Carga y maneja la configuración del proyecto desde un archivo YAML.
-
-config.yaml
-Archivo de configuración que contiene las claves de la API, IDs del proyecto y detalles de la configuración del origen y el destino de los datos.
-
-models.py
-Define los modelos de datos utilizando Pydantic para la validación de entradas en los endpoints.
-
-Cómo Ejecutar el Proyecto
-Prerrequisitos
-Python 3.8 o superior
-Google Cloud SDK configurado
-Claves de la API de AEMET
-Instalación
-Clonar el repositorio:
-bash
-Copiar código
-git clone https://github.com/usuario/repo.git
-cd repo
-Crear y activar un entorno virtual:
-bash
-Copiar código
-python -m venv venv
-source venv/bin/activate  # En Windows usa `venv\Scripts\activate`
-Instalar las dependencias:
-bash
-Copiar código
-pip install -r requirements.txt
-Configurar las variables de entorno en .env (si es necesario).
-Ejecución
-Ejecutar la aplicación:
-
-bash
-Copiar código
-uvicorn main:app --reload
-Pruebas
-Realizar pruebas utilizando curl o cualquier herramienta de cliente HTTP:
-
-bash
-Copiar código
-curl -X GET "http://localhost:8000/incremental_load"
-Dashboard
-Accede al dashboard en Looker Studio utilizando el enlace proporcionado en el repositorio.
-
-
 ```
 dataaemet/
 │
 ├── orchestrator/
-│   └── workflow.yaml          # Archivo de workflow para Cloud Run (si es necesario)
+│   └── workflow.yaml          # Workflow file for orchestrating tasks with Cloud Run (if needed)
+│
 ├── connector/
-│   ├── main.py                # Configuración y ejecución de la aplicación FastAPI
-│   ├── connector.py           # Definición de la clase Connector
-│   ├── locations.py           # Funciones para gestionar las estaciones meteorológicas
-│   ├── sink.py                # Definición de la clase BigQuerySink
-│   ├── source.py              # Definición de la clase AEMETSource
-│   ├── config.py              # Definición de la clase Config y función get_config
-│   ├── models.py              # Definición de modelos Pydantic para validación de datos
-│   ├── config.yaml            # Configuración de la aplicación (API y BigQuery)
-│   ├── Dockerfile             # Definición del contenedor Docker
-│   └── requirements.txt       # Dependencias del proyecto
+│   ├── main.py                # Configuration and execution of FastAPI application
+│   ├── connector.py           # Definition of Connector class
+│   ├── locations.py           # Functions for managing weather stations
+│   ├── sink.py                # Definition of BigQuerySink class
+│   ├── source.py              # Definition of AEMETSource class
+│   ├── config.py              # Definition of Config class and get_config function
+│   ├── models.py              # Definition of Pydantic models for data validation
+│   ├── config.yaml            # Configuration for the application (API and BigQuery)
+│   ├── Dockerfile             # Definition of Docker container
+│   └── requirements.txt       # Project dependencies
 │
 ├── transformer/
-│   ├── definitions/           # Directorio para definiciones de Dataform
-│   │   ├── data_staging.sqlx  # SQL para vista de procesamiento de datos
-│   │   └── process_weather_data.sqlx  # SQL para tabla de reporte meteorológico
-│   ├── workflow_settings.yaml # Configuración de proyecto y dataset en Dataform
-│   └── README.md              # Documentación específica de Dataform (si es necesario)
+│   ├── definitions/           # Directory for Dataform definitions
+│   │   ├── data_staging.sqlx  # SQL for data processing view
+│   │   └── process_weather_data.sqlx  # SQL for weather report table
+│   ├── workflow_settings.yaml # Project and dataset configuration in Dataform
+│   └── README.md              # Specific documentation for Dataform (if needed)
 │
-└── README.md                  # Documentación principal del proyecto
+└── README.md                  # Main project documentation
 ```
