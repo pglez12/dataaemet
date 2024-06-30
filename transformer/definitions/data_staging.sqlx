@@ -31,4 +31,4 @@ SELECT
   hrmin,
   horahrmin
 FROM
-  `aemet-data.aemet_db.data_stagging2`
+  `aemet-data.aemet_db.staging`
