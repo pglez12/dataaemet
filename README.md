@@ -69,3 +69,4 @@ dataaemet/
 
 ## Dashboard
 El dashboard en Looker Studio visualiza los datos meteorológicos procesados, incluyendo filtros por fecha y localización.
+https://lookerstudio.google.com/reporting/83eddea4-8eef-4279-a749-527f91fdf499
