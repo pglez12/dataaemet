@@ -19,8 +19,8 @@ class Connector:
 
     def incremental_load(self):
         try:
-            end_date = datetime.utcnow() - timedelta(days=3)
-            start_date = end_date - timedelta(days=1)
+            end_date = datetime.utcnow()
+            start_date = end_date - timedelta(days=4)
             self.extract_and_load_object(start_date, end_date)
         except Exception as e:
             self.logger.error(f"Error processing incremental load: {e}", exc_info=True)
@@ -30,8 +30,7 @@ class Connector:
         try:
             end_date = datetime.utcnow()
             last_update_date = BigQuerySink.get_last_update_date(self)
-            
-            if last_update_date is None or not isinstance(last_update_date, datetime):
+            if last_update_date is None:
                 start_date = end_date - timedelta(days=15)
             else:
                 start_date = last_update_date
