@@ -28,10 +28,13 @@ class Connector:
 
     def backfill(self):
         try:
-            end_date = datetime.utcnow() - timedelta(days=60)
-            start_date = end_date - timedelta(days=15)
-            #start_date = BigQuerySink.get_last_update_date()
-            # mirar 
+            end_date = datetime.utcnow()
+            last_update_date = BigQuerySink.get_last_update_date(self)
+            
+            if last_update_date is None or not isinstance(last_update_date, datetime):
+                start_date = end_date - timedelta(days=15)
+            else:
+                start_date = last_update_date
             self.extract_and_load_object(start_date, end_date)
         except Exception as e:
             self.logger.error(f"Error processing backfill: {e}", exc_info=True)

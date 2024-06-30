@@ -12,7 +12,7 @@ class BigQuerySink:
     def get_last_update_date(self):
         query = f"""
             SELECT MAX(fecha) AS last_update
-            FROM {self.dataset_id}.{self.table_id}
+            FROM `aemet_db.staging`
         """
         query_job = self.client.query(query)
         results = query_job.result()
