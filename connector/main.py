@@ -1,23 +1,12 @@
 import logging
-from logging.handlers import RotatingFileHandler
 from fastapi import FastAPI, HTTPException
 import uvicorn
 from config import get_config
-from connector import Connector
-from locations import fetch_and_save_estaciones
+from utils.connector import Connector
+from utils.locations import fetch_and_save_estaciones
 
-# Basic logging configuration
 logging.basicConfig(level=logging.INFO)
-
-# Rotating file handler for more detailed logs
-handler = RotatingFileHandler('app.log', maxBytes=10000, backupCount=1)
-handler.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-
-# Create a logger instance
 logger = logging.getLogger(__name__)
-logger.addHandler(handler)  # Add the rotating file handler to the logger
 
 app = FastAPI()
 

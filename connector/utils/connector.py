@@ -2,8 +2,8 @@ from datetime import datetime, timedelta
 import logging
 from google.cloud import bigquery
 
-from sink import BigQuerySink
-from source import AEMETSource
+from utils.sink import BigQuerySink
+from utils.source import AEMETSource
 
 class Connector:
     def __init__(self, config):
@@ -15,13 +15,12 @@ class Connector:
             self.config["sink"]["table_name"]
         )
         self.logger = logging.getLogger(__name__)
-        self.client = bigquery.Client(project="aemet-data")
+        self.client = bigquery.Client(project=self.config["sink"]["project_id"])
 
     def incremental_load(self):
         try:
             end_date = datetime.utcnow() - timedelta(days=3)
             start_date = end_date - timedelta(days=1)
-            
             self.extract_and_load_object(start_date, end_date)
         except Exception as e:
             self.logger.error(f"Error processing incremental load: {e}", exc_info=True)
@@ -29,9 +28,9 @@ class Connector:
 
     def backfill(self):
         try:
-            end_date = datetime.utcnow()
-            #start_date = end_date - timedelta(days=15)
-            start_date = BigQuerySink.get_last_update_date()
+            end_date = datetime.utcnow() - timedelta(days=60)
+            start_date = end_date - timedelta(days=15)
+            #start_date = BigQuerySink.get_last_update_date()
             # mirar 
             self.extract_and_load_object(start_date, end_date)
         except Exception as e:
@@ -58,7 +57,7 @@ class Connector:
         
         query_template = """
             SELECT fecha, indicativo 
-            FROM `aemet-data.aemet_db.data_stagging2`
+            FROM `aemet-data.aemet_db.staging`
             WHERE fecha >= @start_date AND fecha <= @end_date
         """
         job_config = bigquery.QueryJobConfig(
@@ -75,7 +74,6 @@ class Connector:
             self.logger.info(f"Query returned {results.total_rows} rows.")
             
             existing_records = {(row.fecha, row.indicativo) for row in results}
-            self.logger.info(f"puto existing fecha {existing_records}")
             
             self.logger.info(f"Retrieved {len(existing_records)} unique records from BigQuery between {start_date_str} and {end_date_str}.")
             
@@ -86,15 +84,14 @@ class Connector:
         for record in data:
             record_date = datetime.strptime(record['fecha'], '%Y-%m-%d').date()
             record_tuple = (record_date, record['indicativo'])
-            # self.logger.info(f"puto dato fecha {record_tuple}")
             if record_tuple in existing_records:
                 self.logger.warning(f"Record {record_tuple} already exists in BigQuery, skipping insertion.")
             else:
                 if 'prec' in record:
                     if record['prec'] == "Ip":
-                        record['prec'] = 0.09  # Convert "Ip" to equivalent float value
+                        record['prec'] = 0.09
                     elif record['prec'] == "Acum":
-                        record['prec'] = 0.0  # Convert "Acum" to 0
+                        record['prec'] = 0.0
                 required_fields = ['fecha', 'indicativo', 'nombre', 'provincia', 'altitud']
                 if all(record.get(field) is not None for field in required_fields):
                     processed_record = {
