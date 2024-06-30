@@ -39,26 +39,33 @@ Proveer acceso de lectura a `data.team@altostratus.es` a:
 dataaemet/
 │
 ├── orchestrator/
-│   └── workflow.yaml          # Workflow file for orchestrating tasks with Cloud Run (if needed)
+│   └── workflow.yaml
 │
 ├── connector/
-│   ├── main.py                # Configuration and execution of FastAPI application
-│   ├── connector.py           # Definition of Connector class
-│   ├── locations.py           # Functions for managing weather stations
-│   ├── sink.py                # Definition of BigQuerySink class
-│   ├── source.py              # Definition of AEMETSource class
-│   ├── config.py              # Definition of Config class and get_config function
-│   ├── models.py              # Definition of Pydantic models for data validation
-│   ├── config.yaml            # Configuration for the application (API and BigQuery)
-│   ├── Dockerfile             # Definition of Docker container
-│   └── requirements.txt       # Project dependencies
+│   ├── utils/
+│   │   ├── connector.py
+│   │   ├── sink.py     
+│   │   ├── source.py   
+│   │   └── locations.py
+│   ├── main.py
+│   ├── config.py
+│   ├── config.yaml
+│   ├── Dockerfile
+│   └── requirements.txt
 │
 ├── transformer/
-│   ├── definitions/           # Directory for Dataform definitions
-│   │   ├── data_staging.sqlx  # SQL for data processing view
-│   │   └── process_weather_data.sqlx  # SQL for weather report table
-│   ├── workflow_settings.yaml # Project and dataset configuration in Dataform
-│   └── README.md              # Specific documentation for Dataform (if needed)
+│   ├── definitions/
+│   │   ├── data_staging.sqlx
+│   │   └── process_weather_data.sqlx
+│   └── workflow_settings.yaml
 │
-└── README.md                  # Main project documentation
+└── README.md        
 ```
+
+## Uso
+- Endpoint `/incremental_load`: Realiza una carga incremental de datos.
+- Endpoint `/backfill`: Realiza una carga completa de datos faltantes.
+- Endpoint `/locations`: Actualiza la lista de estaciones meteorológicas.
+
+## Dashboard
+El dashboard en Looker Studio visualiza los datos meteorológicos procesados, incluyendo filtros por fecha y localización.
